@@ -1,0 +1,358 @@
+================================================================================
+MUSEUM VR — PROJECT OVERVIEW
+================================================================================
+
+A VR Egyptian Museum tour for Meta Quest via PCVR. The visitor puts on
+a headset, fills in their name, walks through a pre-built museum
+environment, looks at artifacts to identify them, and an AI tour guide
+narrates each one and answers questions out loud.
+
+
+================================================================================
+1. WHAT THE VISITOR EXPERIENCES
+================================================================================
+
+The visit is two scenes loaded back-to-back:
+
+   LOBBY → MUSEUM
+
+  LOBBY
+    A small room with a hieroglyph-textured back wall, two stone columns,
+    and a floating form. The visitor types their name, picks an age and
+    country, and presses "Begin Tour". Their record is saved to a local
+    database, and the museum scene loads.
+
+  MUSEUM
+    The pre-built Egyptian museum environment. The visitor walks around
+    using teleport or thumbstick locomotion. Whenever they look at one
+    of 42 tagged artifacts for 1.5 seconds, a label appears with the
+    artifact's name and era, and the AI tour guide starts narrating it.
+    The visitor can hold a controller button (or T on keyboard) to ask
+    the guide a follow-up question. A 3D animated tour guide character
+    (Mixamo Pharaoh) follows the visitor around the museum.
+
+
+================================================================================
+2. THE CORE SYSTEMS
+================================================================================
+
+------------------------------------------
+2.1  THE LOBBY FORM
+------------------------------------------
+
+What it does:
+   Collects the visitor's name, age, and country before the tour.
+
+Pieces:
+   - World-space VR canvas with TextMeshPro fields.
+   - A stone+gold themed background, hieroglyph wall texture behind.
+   - A SQLite database file that stores each visitor as a row.
+   - An OpenAI key file (config.json) that the guide uses to talk.
+
+How submission works:
+   1. Visitor fills the form, presses Begin Tour.
+   2. The visitor info is inserted into the database.
+   3. The Museum scene loads (replacing the Lobby).
+   4. A "session state" object survives the scene swap so the museum
+      scene knows who the visitor is and which API key to use.
+
+Files involved:
+   - Assets/Scripts/Runtime/Lobby/LobbyController.cs       (form logic)
+   - Assets/Scripts/Runtime/Lobby/CountryList.cs           (~140 countries)
+   - Assets/Scripts/Runtime/Persistence/MuseumDatabase.cs  (SQLite wrap)
+   - Assets/Scripts/Runtime/Config/OpenAIConfig.cs         (key loader)
+   - Assets/Scripts/Runtime/Session/SessionState.cs        (lives across scenes)
+   - Assets/Editor/LobbySceneSetup.cs                      (rebuilds the scene)
+
+
+------------------------------------------
+2.2  ARTIFACT IDENTIFICATION (gaze)
+------------------------------------------
+
+What it does:
+   Detects which artifact the visitor is looking at and triggers narration.
+
+How it works:
+   1. Each frame, a ray is shot forward from the visitor's head.
+   2. If it hits an object tagged with ArtifactInfo, a 1.5s timer starts.
+   3. If the visitor keeps looking, the timer completes and:
+        - A floating label spawns with the artifact's name and era.
+        - The tour guide is told what artifact this is and starts narrating.
+   4. The same artifact won't fire again for 30 seconds (cooldown).
+
+Why a gaze raycast and not ML:
+   The original plan included an on-device image classifier (Unity Inference
+   Engine / Sentis) that would identify artifacts by visual recognition. That
+   pipeline is still in the codebase but disabled — the live path is just the
+   gaze raycast, which is more reliable and cheaper.
+
+Why 2 meters:
+   The museum walls don't have colliders everywhere. A longer raycast would
+   pass through walls and "identify" artifacts in adjacent rooms. 2m keeps it
+   inside the visitor's actual room.
+
+Files involved:
+   - Assets/Scripts/Runtime/Artifact/GazeArtifactDetector.cs
+   - Assets/Scripts/Runtime/Artifact/ArtifactInfo.cs
+   - Assets/Scripts/Runtime/Artifact/ArtifactLabelSpawner.cs
+   - Assets/Editor/ArtifactInfoAutoFill.cs   (catalog of all 42 artifacts)
+
+
+------------------------------------------
+2.3  THE TOUR GUIDE'S VOICE
+------------------------------------------
+
+What it does:
+   Streams real-time speech to and from OpenAI's Realtime API, so the
+   guide sounds like a human talking, not a text-to-speech robot.
+
+How it works:
+   1. On lobby submit, a WebSocket connection is opened to OpenAI's
+      Realtime API endpoint, authenticated with the saved API key.
+   2. The microphone records audio in 40ms chunks at 24kHz.
+   3. When the visitor holds the push-to-talk button (Y/B/T):
+        - Mic chunks are sent to OpenAI as PCM16-base64.
+        - On release, the request is committed and a response is asked for.
+   4. OpenAI streams audio back as base64 PCM16 deltas.
+   5. Those deltas land in a 30-second ring buffer.
+   6. A streaming AudioSource plays the buffer in real time, with a
+      200ms jitter prebuffer so packets that arrive late don't click.
+   7. When the gaze detector identifies an artifact, the orchestrator
+      sends OpenAI a "the visitor is now looking at X" message and asks
+      for a 1-2 sentence narration.
+
+Three input modes:
+   - GazeOnly:   guide only narrates artifacts. Mic disabled.
+   - PushToTalk: visitor holds a button to talk. Default (avoids echo).
+   - ServerVad:  mic always live, OpenAI auto-detects speech end. Most
+                 natural but creates echo loops with PC speakers + mic.
+
+Why English-only:
+   The Realtime API picks a language based on the visitor's name and country
+   if not told otherwise. ("Henri from France" → French.) The system prompt
+   hard-locks the response to English regardless of visitor info.
+
+Files involved:
+   - Assets/Scripts/Runtime/Voice/GuideOrchestrator.cs   (the brain)
+   - Assets/Scripts/Runtime/Voice/RealtimeClient.cs      (WebSocket transport)
+   - Assets/Scripts/Runtime/Voice/MicCapture.cs          (mic → PCM16)
+   - Assets/Scripts/Runtime/Voice/StreamingAudioPlayer.cs (PCM16 → speaker)
+
+
+------------------------------------------
+2.4  THE TOUR GUIDE'S BODY
+------------------------------------------
+
+What it does:
+   A Mixamo Pharaoh character that follows the visitor around the museum
+   and animates while the AI is speaking.
+
+How it works:
+   1. A NavMesh is baked over the museum's walkable floor.
+   2. A NavMeshAgent on the avatar pathfinds toward the visitor.
+   3. The avatar maintains a fixed 1.8m distance:
+        - Visitor walks toward avatar → avatar backs up.
+        - Visitor walks away → avatar follows.
+        - Visitor stands still → avatar settles 1.8m away and faces them.
+   4. An Animator Controller drives Idle / Walk / Talk states based on
+      whether the agent is moving and whether the AI is speaking.
+   5. Audio plays from a "voice source" parented to the head bone, so
+      sound feels like it's coming from the avatar's mouth (3D audio).
+   6. A "jaw-flap" component reads the audio's amplitude each frame
+      and sets the IsSpeaking animator flag (also rotates the jaw bone
+      if the rig has one — most Mixamo characters don't).
+
+Mixamo gotcha (the "teleporting back" bug):
+   Mixamo's Walking animation has forward translation baked into the hip
+   bone. With root motion disabled, the bones still drift forward each
+   frame, then snap back when the loop restarts. The fix: every frame,
+   after the Animator runs, the hip bone's local X and Z are reset to
+   their rest values. The visible character stays glued to the
+   NavMeshAgent's actual position.
+
+Files involved:
+   - Assets/Scripts/Runtime/Guide/TourGuideAgent.cs    (NavMesh follow + lock)
+   - Assets/Scripts/Runtime/Guide/AmplitudeJawFlap.cs  (audio → IsSpeaking)
+   - Assets/Editor/MixamoWireUp.cs                     (builds the avatar)
+   - Assets/Editor/MixamoMaterialFix.cs                (HDRP textures)
+   - Assets/Editor/MixamoMaskMapBaker.cs               (proper PBR mask)
+   - Assets/Editor/MixamoAnimationFix.cs               (loop + in-place)
+
+
+------------------------------------------
+2.5  CONFIGURATION & PERSISTENCE
+------------------------------------------
+
+OpenAI key:
+   Read from   <exe folder>/MuseumVR/config.json   (portable, USB-friendly)
+   Falls back  %APPDATA%/MuseumVR/config.json      (per-user dev install)
+   Format:     { "openai_api_key": "sk-..." }
+
+Visitor database:
+   SQLite file at  <exe folder>/MuseumVR/museum.db  (or %APPDATA% fallback).
+   One row per visitor: id, name, age, country, started_at.
+
+The portable configuration is what makes the production build droppable on
+a USB drive without per-machine setup.
+
+
+================================================================================
+3. THE TECHNICAL STACK
+================================================================================
+
+  Engine:        Unity 6000.4.5f1 LTS
+  Render:        High Definition Render Pipeline 17.4 (no raytracing,
+                 no SSR, no SSGI, no volumetric clouds, Forward path)
+  VR:            OpenXR + XR Interaction Toolkit 3.0.8
+                 (Meta Quest 2/3/Pro profiles, PCVR via Quest Link)
+  Input:         Unity New Input System
+  AI Voice:      OpenAI Realtime API (WebSocket, gpt-4o-mini-realtime)
+  ML (inert):    Unity Inference Engine (was called Sentis)
+  Pathfinding:   Unity AI Navigation (NavMeshSurface + NavMeshAgent)
+  Database:      SQLite via gilzoide.sqlite-net (OpenUPM)
+  JSON:          Newtonsoft.Json
+  Avatar:        Mixamo humanoid + custom animator + jaw-flap
+  Environment:   "Egyptian Museum VR" by AK Studio Art (Unity Asset Store)
+
+
+================================================================================
+4. HOW THE PIECES CONNECT
+================================================================================
+
+App start
+   │
+   ▼
+Lobby scene loads
+   │
+   ├─ Loads OpenAI key from config.json
+   ├─ Creates a SessionState object that survives scene unloads
+   │
+   ▼
+Visitor fills form, presses Begin Tour
+   │
+   ├─ Visitor row inserted into SQLite
+   ├─ Visitor info stored in SessionState
+   │
+   ▼
+Museum scene loads (Lobby unloads)
+   │
+   ├─ Tour Guide GameObject (with all the voice scripts) reads the API
+   │  key from SessionState and opens a WebSocket to OpenAI.
+   ├─ Tour Guide Avatar (Mixamo Pharaoh) spawns and starts following
+   │  the visitor via NavMesh.
+   ├─ Greeting plays: "Welcome, [name]..."
+   │
+   ▼
+Visitor walks around
+   │
+   ├─ Gaze detector watches what the visitor's head is pointed at.
+   ├─ When dwell completes on an artifact:
+   │       Label spawns + Tour Guide is told to narrate it.
+   │
+   ├─ Visitor holds Y / B / T:
+   │       Mic chunks stream to OpenAI; on release, response asked for.
+   │
+   ▼
+Audio streams back from OpenAI
+   │
+   ├─ Lands in 30s ring buffer.
+   ├─ AudioSource (parented to avatar's head bone) plays it.
+   ├─ Jaw-flap reads the audio amplitude → IsSpeaking flag flips.
+   ├─ Animator transitions: Idle/Walk → Talk.
+
+
+================================================================================
+5. HOW TO RUN IT — PRODUCTION VR EDITION
+================================================================================
+
+Target: Meta Quest 2 / 3 / Pro via PCVR Link, on Windows 10 / 11.
+
+In the Unity editor:
+   - Open the project.
+   - Connect the Quest via USB-C Link cable (or Air Link / Steam Link).
+   - Press Play in the Museum scene or the Lobby scene.
+
+For deployment on another PC:
+   - Tools → Museum → Phase 7 →
+     "Build Portable Production Package (VR)"
+   - Result: a self-contained folder at Build/MuseumVR-Production/
+     containing MuseumVR.exe, the MuseumVR/ data folder, and the
+     OpenAI configuration file. Drop on a USB drive, copy to the
+     target PC, run the exe.
+   - The target PC needs Meta Quest Link installed and a Quest
+     connected via Link / Air Link / Steam Link.
+
+
+================================================================================
+6. DEVELOPMENT WORKFLOW
+================================================================================
+
+Almost all multi-step Unity setup actions are reproducible menu items:
+
+  Tools → Museum → ...
+
+Examples:
+  Phase 0:  Apply HDRP VR Settings, Fix Sample Materials for HDRP
+  Phase 1:  Configure OpenXR, Set Up Museum Scene
+  Phase 2:  Mark Selected as Teleportation Area
+  Phase 3:  Set Up Gaze Detection, Auto-Fill Artifact Info
+  Phase 4:  Set Up Lobby Scene
+  Phase 5:  Add Tour Guide to Active Scene, Set Mode {GazeOnly|PTT|VAD}
+  Phase 6:  Bake Museum NavMesh, Wire Mixamo Avatar,
+            Fix Mixamo Materials for HDRP, Bake Mixamo MaskMap,
+            Configure Mixamo Animations for In-Place Looping,
+            Diagnose & Repair Avatar Materials
+  Phase 7:  Build Portable Production Package (VR)
+
+The full menu list is documented in PROJECT_REPORT.md Appendix B.
+
+
+================================================================================
+7. KNOWN GOTCHAS
+================================================================================
+
+- Mixamo characters' Walking animation has root motion baked into the hip
+  bone. Without the runtime XZ-lock fix in TourGuideAgent.LateUpdate, the
+  body drifts forward and snaps back each loop.
+
+- HDRP rejects materials made for the Built-in / URP shaders — they render
+  pink. Both the imported XR Starter Assets and Mixamo materials need
+  conversion. The "Fix Sample Materials for HDRP" and "Fix Mixamo Materials
+  for HDRP" menus do this.
+
+- Server VAD mode creates echo loops with PC speakers + PC mic — the
+  guide hears its own audio and re-triggers itself. PushToTalk mode
+  (the default) avoids this.
+
+- The Realtime API's `response.modalities` must be ["audio", "text"], not
+  just ["audio"], or it silently returns nothing.
+
+- Without an explicit "respond in English only" lock in the system prompt,
+  the model picks a language based on the visitor's name or country.
+
+- Walls in the AK Studio Art Egyptian Museum lack colliders in places.
+  The 2m gaze raycast limit + bounds-center check work around this.
+
+
+================================================================================
+8. ENTRY POINTS FOR DEEPER READING
+================================================================================
+
+- PROJECT_REPORT.md
+       The full graduation report: architecture, every phase, design
+       issues + resolutions, performance evaluation, business model,
+       and five appendices (source listings, menu reference, build
+       instructions, artifact catalogue, project structure).
+
+- progress.md
+       Phase-by-phase status, last-known-good runtime config, decisions log.
+       Read this to understand "what state is the project in right now".
+
+- SUMMARY.md
+       Higher-level snapshot of completed work and locked architectural
+       decisions.
+
+
+================================================================================
+END
+================================================================================

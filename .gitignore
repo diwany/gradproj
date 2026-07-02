@@ -1,0 +1,33 @@
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+
+# Auto-generated IDE and tooling files
+.vs/
+.vscode/
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity package cache
+[Pp]ackages/*/package-lock.json
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Local tooling metadata
+.claude/

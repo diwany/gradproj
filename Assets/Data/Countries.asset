@@ -1,0 +1,339 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f1af5b57dceb914ab675031faff2310, type: 3}
+  m_Name: Countries
+  m_EditorClassIdentifier: Assembly-CSharp::Museum.Lobby.CountryList
+  countries:
+  - code: US
+    name: United States
+  - code: CA
+    name: Canada
+  - code: MX
+    name: Mexico
+  - code: GT
+    name: Guatemala
+  - code: HN
+    name: Honduras
+  - code: SV
+    name: El Salvador
+  - code: NI
+    name: Nicaragua
+  - code: CR
+    name: Costa Rica
+  - code: PA
+    name: Panama
+  - code: CU
+    name: Cuba
+  - code: DO
+    name: Dominican Republic
+  - code: HT
+    name: Haiti
+  - code: JM
+    name: Jamaica
+  - code: TT
+    name: Trinidad and Tobago
+  - code: BS
+    name: Bahamas
+  - code: BR
+    name: Brazil
+  - code: AR
+    name: Argentina
+  - code: CL
+    name: Chile
+  - code: CO
+    name: Colombia
+  - code: PE
+    name: Peru
+  - code: VE
+    name: Venezuela
+  - code: EC
+    name: Ecuador
+  - code: BO
+    name: Bolivia
+  - code: PY
+    name: Paraguay
+  - code: UY
+    name: Uruguay
+  - code: GB
+    name: United Kingdom
+  - code: IE
+    name: Ireland
+  - code: FR
+    name: France
+  - code: DE
+    name: Germany
+  - code: ES
+    name: Spain
+  - code: PT
+    name: Portugal
+  - code: IT
+    name: Italy
+  - code: NL
+    name: Netherlands
+  - code: BE
+    name: Belgium
+  - code: LU
+    name: Luxembourg
+  - code: CH
+    name: Switzerland
+  - code: AT
+    name: Austria
+  - code: MT
+    name: Malta
+  - code: CY
+    name: Cyprus
+  - code: AD
+    name: Andorra
+  - code: MC
+    name: Monaco
+  - code: LI
+    name: Liechtenstein
+  - code: SM
+    name: San Marino
+  - code: IS
+    name: Iceland
+  - code: SE
+    name: Sweden
+  - code: NO
+    name: Norway
+  - code: DK
+    name: Denmark
+  - code: FI
+    name: Finland
+  - code: PL
+    name: Poland
+  - code: CZ
+    name: Czechia
+  - code: SK
+    name: Slovakia
+  - code: HU
+    name: Hungary
+  - code: RO
+    name: Romania
+  - code: BG
+    name: Bulgaria
+  - code: SI
+    name: Slovenia
+  - code: HR
+    name: Croatia
+  - code: BA
+    name: Bosnia and Herzegovina
+  - code: RS
+    name: Serbia
+  - code: ME
+    name: Montenegro
+  - code: MK
+    name: North Macedonia
+  - code: AL
+    name: Albania
+  - code: XK
+    name: Kosovo
+  - code: GR
+    name: Greece
+  - code: EE
+    name: Estonia
+  - code: LV
+    name: Latvia
+  - code: LT
+    name: Lithuania
+  - code: BY
+    name: Belarus
+  - code: UA
+    name: Ukraine
+  - code: MD
+    name: Moldova
+  - code: RU
+    name: Russia
+  - code: TR
+    name: "T\xFCrkiye"
+  - code: IL
+    name: Israel
+  - code: PS
+    name: Palestine
+  - code: LB
+    name: Lebanon
+  - code: SY
+    name: Syria
+  - code: JO
+    name: Jordan
+  - code: IQ
+    name: Iraq
+  - code: IR
+    name: Iran
+  - code: SA
+    name: Saudi Arabia
+  - code: AE
+    name: UAE
+  - code: QA
+    name: Qatar
+  - code: BH
+    name: Bahrain
+  - code: KW
+    name: Kuwait
+  - code: OM
+    name: Oman
+  - code: YE
+    name: Yemen
+  - code: EG
+    name: Egypt
+  - code: LY
+    name: Libya
+  - code: TN
+    name: Tunisia
+  - code: DZ
+    name: Algeria
+  - code: MA
+    name: Morocco
+  - code: SD
+    name: Sudan
+  - code: ET
+    name: Ethiopia
+  - code: ER
+    name: Eritrea
+  - code: SO
+    name: Somalia
+  - code: KE
+    name: Kenya
+  - code: UG
+    name: Uganda
+  - code: TZ
+    name: Tanzania
+  - code: RW
+    name: Rwanda
+  - code: BI
+    name: Burundi
+  - code: DJ
+    name: Djibouti
+  - code: NG
+    name: Nigeria
+  - code: GH
+    name: Ghana
+  - code: CI
+    name: "C\xF4te d'Ivoire"
+  - code: SN
+    name: Senegal
+  - code: ML
+    name: Mali
+  - code: BF
+    name: Burkina Faso
+  - code: NE
+    name: Niger
+  - code: CM
+    name: Cameroon
+  - code: CD
+    name: DR Congo
+  - code: CG
+    name: Congo
+  - code: GA
+    name: Gabon
+  - code: AO
+    name: Angola
+  - code: ZM
+    name: Zambia
+  - code: ZW
+    name: Zimbabwe
+  - code: MZ
+    name: Mozambique
+  - code: MG
+    name: Madagascar
+  - code: MW
+    name: Malawi
+  - code: BW
+    name: Botswana
+  - code: NA
+    name: Namibia
+  - code: ZA
+    name: South Africa
+  - code: LS
+    name: Lesotho
+  - code: SZ
+    name: Eswatini
+  - code: KZ
+    name: Kazakhstan
+  - code: UZ
+    name: Uzbekistan
+  - code: TM
+    name: Turkmenistan
+  - code: KG
+    name: Kyrgyzstan
+  - code: TJ
+    name: Tajikistan
+  - code: AF
+    name: Afghanistan
+  - code: PK
+    name: Pakistan
+  - code: IN
+    name: India
+  - code: NP
+    name: Nepal
+  - code: BT
+    name: Bhutan
+  - code: BD
+    name: Bangladesh
+  - code: LK
+    name: Sri Lanka
+  - code: MV
+    name: Maldives
+  - code: CN
+    name: China
+  - code: HK
+    name: Hong Kong
+  - code: TW
+    name: Taiwan
+  - code: MN
+    name: Mongolia
+  - code: KR
+    name: South Korea
+  - code: KP
+    name: North Korea
+  - code: JP
+    name: Japan
+  - code: VN
+    name: Vietnam
+  - code: LA
+    name: Laos
+  - code: KH
+    name: Cambodia
+  - code: TH
+    name: Thailand
+  - code: MM
+    name: Myanmar
+  - code: MY
+    name: Malaysia
+  - code: SG
+    name: Singapore
+  - code: ID
+    name: Indonesia
+  - code: BN
+    name: Brunei
+  - code: PH
+    name: Philippines
+  - code: TL
+    name: Timor-Leste
+  - code: AU
+    name: Australia
+  - code: NZ
+    name: New Zealand
+  - code: PG
+    name: Papua New Guinea
+  - code: FJ
+    name: Fiji
+  - code: SB
+    name: Solomon Islands
+  - code: VU
+    name: Vanuatu
+  - code: WS
+    name: Samoa
+  - code: TO
+    name: Tonga
+  - code: XX
+    name: Other / Prefer not to say

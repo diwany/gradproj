@@ -1,0 +1,43 @@
+# 42 ArtifactInfo components — name<TAB>scene-path<TAB>x<TAB>y<TAB>z
+Ankh Khonsu	Assets/Statues/Ankh Khonsu	11.7	1.0	15.2
+Apis Bull	Assets/Statues/Apis Bull	-10.1	1.0	12.4
+Baboon	Assets/Statues/Baboon	-8.6	1.0	-6.6
+Block Statue	Assets/Statues/Block Statue	-4.0	1.0	12.4
+Canopic Jar	Assets/Statues/Canopic Jar	-0.7	1.0	1.2
+Cat Statue	Assets/Statues/Cat Statue	7.8	1.0	-6.7
+Chest of Tutankhamun	Assets/Statues/Chest of Tutankhamun	0.8	1.0	-5.0
+Coffin of Akhenaten	Assets/Statues/Coffin of Akhenaten	11.8	1.0	2.6
+Coffin of Amunred	Assets/Statues/Coffin of Amunred	-11.7	1.0	9.7
+Coffin of Mut-iy-iy	Assets/Statues/Coffin of Mut-iy-iy	-11.7	1.0	15.4
+Egyptian Boat	Assets/Statues/Egyptian Boat	-0.7	1.0	-4.2
+Egyptian Khopesh	Assets/Statues/Egyptian Khopesh	10.4	1.0	-6.7
+False Door of Ni-ankh-Snefru	Assets/Statues/False Door of Ni-ankh-Snefru	11.8	0.4	6.6
+Goddess Sekhmet	Assets/Statues/Goddess Sekhmet	-4.1	1.0	-6.6
+Goddess Taweret	Assets/Statues/Goddess Taweret	4.6	1.0	-6.7
+Head of Tutankhamun	Assets/Statues/Head of Tutankhamun	4.3	1.0	2.5
+Horus Statue	Assets/Statues/Horus Statue	-2.5	1.0	-6.6
+Inner Coffin of Djedmut	Assets/Statues/Inner Coffin of Djedmut	-0.8	1.0	9.7
+Khafre Enthroned	Assets/Statues/Khafre Enthroned	8.0	0.4	12.1
+Khasekhemwy	Assets/Statues/Khasekhemwy	-2.4	1.0	12.4
+King Djoser	Assets/Statues/King Djoser	11.5	0.4	10.4
+Nefertiti Bust	Assets/Statues/Nefertiti Bust	8.1	1.0	2.5
+Nofret	Assets/Statues/Nofret	11.7	0.4	-1.7
+Rahotep	Assets/Statues/Rahotep	11.6	0.4	-1.2
+Ramses III	Assets/Statues/Ramses III	4.5	0.4	12.1
+Sandstone Sphinx Statue	Assets/Statues/Sandstone Sphinx Statue	-11.7	1.0	5.6
+Sarcophagus of Hunefer	Assets/Statues/Sarcophagus of Hunefer	-11.6	0.0	-3.3
+Sarcophagus of Mindjedef	Assets/Statues/Sarcophagus of Mindjedef	-11.6	0.4	0.6
+Sphinx of Hatshepsut	Assets/Statues/Sphinx of Hatshepsut	4.9	0.5	8.3
+Statue of Amenhotep III	Assets/Statues/Statue of Amenhotep III	0.9	0.4	10.4
+Statue of Hatshepsut	Assets/Statues/Statue of Hatshepsut	8.3	0.0	8.2
+Statue of Maya and Merit	Assets/Statues/Statue of Maya and Merit	0.9	0.4	2.4
+Statue of Mentuhotep II	Assets/Statues/Statue of Mentuhotep II	2.1	1.0	-6.7
+Statue of Ramses III	Assets/Statues/Statue of Ramses III	11.8	0.4	-5.1
+Statue of Roy	Assets/Statues/Statue of Roy	-6.3	1.0	-0.2
+Statuette of a Jackal	Assets/Statues/Statuette of a Jackal	-10.3	1.0	-6.6
+Stela of Ituerneheh	Assets/Statues/Stela of Ituerneheh	-8.5	1.0	12.4
+Stela of Seter-au	Assets/Statues/Stela of Seter-au	-6.2	1.0	6.0
+Striding Thoth	Assets/Statues/Striding Thoth	-0.8	1.0	4.5
+The Goddess Mut	Assets/Statues/The Goddess Mut	10.4	1.0	12.4
+The Rosetta Stone	Assets/Statues/The Rosetta Stone	-6.3	1.0	2.9
+Triad of Menkaure	Assets/Statues/Triad of Menkaure	2.1	1.0	12.4
