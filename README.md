@@ -111,4 +111,7 @@ SQLite visitor data is stored in:
 
 ## License
 
-This project is maintained as an academic graduation project repository.
+Copyright (c) 2026 Mohamed Diwany.
+
+All rights reserved. This repository is for academic grading purposes only.
+Unauthorized copying, modification, or distribution is strictly prohibited.
